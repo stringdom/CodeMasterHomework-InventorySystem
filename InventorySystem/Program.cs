@@ -1,4 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
+
+/*
+    TODO:
+    - Create a way to store, display and delete items to the productInventory
+    - Store the information as a CSV text file in the root directory to read on load time and to write changes to.
+    - Edit price menu to change the price comfortably.
+*/
 using static System.Console;
 
 namespace InventorySystem
