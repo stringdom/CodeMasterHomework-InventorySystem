@@ -56,14 +56,14 @@ namespace InventorySystem
                     WriteLine(Inventory.emptyErrorMessage);
                     continue;
                 }
-                else if (int.TryParse(userAnswer, out option))
-                {
-                    return option;
-                }
-                else
+                else if (!int.TryParse(userAnswer, out option))
                 {
                     WriteLine("Option must be a number");
                     continue;
+                }
+                else
+                {
+                    return option;
                 }
             }
         }
