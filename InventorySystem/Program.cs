@@ -1,2 +1,19 @@
 ﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+namespace InventorySystem
+{
+    static class Inventory
+    {
+        enum ProgramState
+        {
+            MainMenu,
+            AddProduct,
+            DeleteProduct,
+            DisplayInventory
+        }
+        
+        static void Main()
+        {
+            Console.WriteLine("This runs!");
+        }
+    }
+}
