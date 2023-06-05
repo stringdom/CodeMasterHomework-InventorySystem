@@ -47,16 +47,16 @@ namespace InventorySystem
         
         static int GetMenuOption()
         {
+            int option = 0;
             while (true)
             {
                 string? userAnswer = ReadLine();
-                int option = 0;
                 if (userAnswer == null)
                 {
                     WriteLine(Inventory.emptyErrorMessage);
                     continue;
                 }
-                else if (!int.TryParse(userAnswer, out option))
+                if (!int.TryParse(userAnswer, out option))
                 {
                     WriteLine("Option must be a number");
                     continue;
