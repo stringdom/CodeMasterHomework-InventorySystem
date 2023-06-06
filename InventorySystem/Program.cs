@@ -205,7 +205,7 @@ namespace InventorySystem
                         if (line != null)
                         {
                             string[] pair = line.Split(",");
-                            productInventory[pair[0]] = decimal.Parse(pair[1]);
+                            productInventory.Add(pair[0], decimal.Parse(pair[1].Replace('.', ',')));
                         }
                         else
                         {
@@ -228,7 +228,7 @@ namespace InventorySystem
             {
                 foreach (var product in productInventory)
                 {
-                    inventoryFile.WriteLine("{0},{1}", product.Key, product.Value);
+                    inventoryFile.WriteLine("{0},{1}", product.Key, product.Value.ToString().Replace(',', '.'));
                 }
             }
             return;
