@@ -22,6 +22,7 @@ namespace InventorySystem
             Name = name;
             Price = price;
         }
+        public void ChangePrice(decimal price) => Price = price;
     }
 
     public class Inventory
