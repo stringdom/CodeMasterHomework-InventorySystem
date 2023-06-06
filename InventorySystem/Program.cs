@@ -5,7 +5,7 @@
     [x] Create a way to store, display and delete items to the productInventory
     [x] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
     [ ] Edit price menu to change the price comfortably.
-    [ ] Bugfixes to catch exceptions
+    [x] Bugfixes to catch exceptions
 */
 using System;
 using System.Globalization;
@@ -115,20 +115,9 @@ namespace InventorySystem
         {
             Clear();
             WriteLine("Add product mode.");
+            string name;
             Write("Product [Name]: ");
-            string? name = null;
-            while (name == null)
-            {
-                name = ReadLine();
-                if (name != null)
-                {
-                    break;
-                }
-                else
-                {
-                    WriteLine(emptyErrorMessage);
-                }
-            }
+            name = GetAText();
             
             Write("Product [Price]: ");
             decimal price;
@@ -137,7 +126,17 @@ namespace InventorySystem
                 WriteLine("You must enter a number.");
             }
 
-            productInventory.Add(name, price);
+            try
+            {
+                productInventory.Add(name, price);
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("This product is already in the inventory.\nTry editing its price instead.");
+                ReadKey();
+                return;
+            }
+
         }
 
         static void DisplayInventory()
@@ -237,6 +236,24 @@ namespace InventorySystem
                 }
             }
             return;
+        }
+
+        static string GetAText()
+        {
+            string? text = null;
+            while (text == null)
+            {
+                text = ReadLine();
+                if (text != null)
+                {
+                    break;
+                }
+                else
+                {
+                    WriteLine(emptyErrorMessage);
+                }
+            }           
+            return text;
         }
     }
 }
