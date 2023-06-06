@@ -31,11 +31,13 @@ namespace InventorySystem
         static void Main()
         {
             ProgramState currentState = ProgramState.MainMenu;
+            LoadFile();
             while (currentState != ProgramState.Exit)
             {
                 currentState = MenuControl(currentState);
             }
             Clear();
+            WriteFile();
             WriteLine(exitMessage);
             ReadKey();
         }
@@ -211,6 +213,18 @@ namespace InventorySystem
                 File.CreateText(filePath);
                 return;
             }
+        }
+
+        static void WriteFile(string filePath = "inventory.csv")
+        {
+            using (StreamWriter inventoryFile = new StreamWriter(filePath))
+            {
+                foreach (var product in productInventory)
+                {
+                    WriteLine("{0},{1}", product.Key, product.Value);
+                }
+            }
+            return;
         }
     }
 }
