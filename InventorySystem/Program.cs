@@ -53,6 +53,9 @@ namespace InventorySystem
                 case ProgramState.AddProduct:
                     AppendNewProduct();
                     return ProgramState.MainMenu;
+                case ProgramState.DisplayInventory:
+                    DisplayInventory();
+                    return ProgramState.MainMenu;
                 default:
                     return ProgramState.Exit;
             }
@@ -125,6 +128,20 @@ namespace InventorySystem
             }
 
             productInventory.Add(name, price);
+        }
+
+        static void DisplayInventory()
+        {
+            Clear();
+            WriteLine("List of products and prices.\n");
+            WriteLine("|       Product name       |  Price  |");
+            WriteLine("|--------------------------|---------|");
+            foreach (var product in productInventory)
+            {
+                WriteLine("|{0,-26}|${1,8:N2}|", product.Key, productInventory[product.Key]);
+                WriteLine("|--------------------------|---------|");
+            }
+            ReadKey();
         }
     }
 }
