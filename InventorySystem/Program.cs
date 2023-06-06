@@ -7,7 +7,6 @@
     [ ] Unit testing.
     [ ] Bugfixing.
 */
-using System;
 using System.Globalization;
 using static System.Console;
 
