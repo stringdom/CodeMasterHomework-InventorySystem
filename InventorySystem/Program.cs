@@ -199,11 +199,18 @@ namespace InventorySystem
             {
                 using (StreamReader inventoryFile = new StreamReader(filePath, true))
                 {
-                    string? line = inventoryFile.ReadLine();
-                    while (line != null)
+                    while (inventoryFile.Peek() >= 0)
                     {
-                        string[] pair = line.Trim().Split(",");
-                        WriteLine(pair);
+                        string? line = inventoryFile.ReadLine();
+                        if (line != null)
+                        {
+                            string[] pair = line.Split(",");
+                            productInventory[pair[0]] = decimal.Parse(pair[1]);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     return;
                 }
@@ -221,7 +228,7 @@ namespace InventorySystem
             {
                 foreach (var product in productInventory)
                 {
-                    WriteLine("{0},{1}", product.Key, product.Value);
+                    inventoryFile.WriteLine("{0},{1}", product.Key, product.Value);
                 }
             }
             return;
