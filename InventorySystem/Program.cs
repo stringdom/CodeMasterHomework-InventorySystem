@@ -7,6 +7,8 @@
     [ ] Edit price menu to change the price comfortably.
     [ ] Bugfixes to catch exceptions
 */
+using System;
+using System.Globalization;
 using static System.Console;
 
 namespace InventorySystem
@@ -22,7 +24,9 @@ namespace InventorySystem
             Exit,
             EditProduct
         }
-        
+
+        static CultureInfo culture = new CultureInfo("es-ES");
+
         private static Dictionary<string, decimal> productInventory = new Dictionary<string, decimal>();
         static string welcomeMessage = "Welcome to Dynamics Inventory System.";
         static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Exit Inventory system";
@@ -205,8 +209,8 @@ namespace InventorySystem
                         string? line = inventoryFile.ReadLine();
                         if (line != null)
                         {
-                            string[] pair = line.Split(",");
-                            productInventory.Add(pair[0], decimal.Parse(pair[1].Replace('.', ',')));
+                            string[] pair = line.Split(";");
+                            productInventory.Add(pair[0], decimal.Parse(pair[1], NumberStyles.AllowDecimalPoint, culture));
                         }
                         else
                         {
@@ -229,7 +233,7 @@ namespace InventorySystem
             {
                 foreach (var product in productInventory)
                 {
-                    inventoryFile.WriteLine("{0},{1}", product.Key, product.Value.ToString().Replace(',', '.'));
+                    inventoryFile.WriteLine("{0};{1}", product.Key, product.Value.ToString(culture));
                 }
             }
             return;
