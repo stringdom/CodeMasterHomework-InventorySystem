@@ -4,6 +4,7 @@
     TODO: [ ] Refactor this program to use the OOP patterns.
     [ ] CRUD: Create, Read, Update, Delete.
     [ ] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
+    [ ] Console based user inteface
     [ ] Unit testing.
     [ ] Bugfixing.
 */
@@ -25,6 +26,46 @@ namespace InventorySystem
 
     public class Inventory
     {
+        public Dictionary<Product,int>? Contents { get; private set; }
+
+        public void Add(Product product, int stock = 0)
+        {
+            try
+            {
+                Contents.Add(product, stock);
+                WriteLine("Product: {0} added to inventory.", product.Name);
+                return;
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("This product is already in the inventory.\nTry editing its price or stock instead.");
+                ReadKey();
+                return;
+            }
+        }
+        public void Remove(Product product)
+        {
+            try
+            {
+                Contents.Remove(product);
+                WriteLine("Product: {0} deleted.", product.Name);
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("This product doesn't exist in the inventory.");
+                ReadKey();
+                return;
+
+            }
+        }
+        public void ChangeStock(Product product, int stock)
+        {
+            Contents[product] = stock;
+        }
+    }
+
+    public class InventoryUI
+    {
         enum ProgramState
         {
             MainMenu,
@@ -35,7 +76,7 @@ namespace InventorySystem
             EditProduct
         }
 
-        static CultureInfo culture = new CultureInfo("es-ES");
+        public static CultureInfo culture = new CultureInfo("es-ES");
 
         private static Dictionary<string, decimal> productInventory = new Dictionary<string, decimal>();
         static string welcomeMessage = "Welcome to Dynamics Inventory System.";
