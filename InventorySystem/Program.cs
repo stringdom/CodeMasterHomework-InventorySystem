@@ -3,8 +3,9 @@
 /*
     TODO:
     [x] Create a way to store, display and delete items to the productInventory
-    [ ] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
+    [x] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
     [ ] Edit price menu to change the price comfortably.
+    [ ] Bugfixes to catch exceptions
 */
 using static System.Console;
 
