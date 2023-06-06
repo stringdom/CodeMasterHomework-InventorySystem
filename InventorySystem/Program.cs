@@ -190,5 +190,27 @@ namespace InventorySystem
                 return;
             }
         }
+
+        static void LoadFile(string filePath = "inventory.csv")
+        {
+            if (File.Exists(filePath))
+            {
+                using (StreamReader inventoryFile = new StreamReader(filePath, true))
+                {
+                    string? line = inventoryFile.ReadLine();
+                    while (line != null)
+                    {
+                        string[] pair = line.Trim().Split(",");
+                        WriteLine(pair);
+                    }
+                    return;
+                }
+            }
+            else
+            {
+                File.CreateText(filePath);
+                return;
+            }
+        }
     }
 }
