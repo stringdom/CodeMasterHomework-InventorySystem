@@ -2,9 +2,9 @@
 
 /*
     TODO:
-    - Create a way to store, display and delete items to the productInventory
-    - Store the information as a CSV text file in the root directory to read on load time and to write changes to.
-    - Edit price menu to change the price comfortably.
+    [x] Create a way to store, display and delete items to the productInventory
+    [ ] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
+    [ ] Edit price menu to change the price comfortably.
 */
 using static System.Console;
 
@@ -55,6 +55,9 @@ namespace InventorySystem
                     return ProgramState.MainMenu;
                 case ProgramState.DisplayInventory:
                     DisplayInventory();
+                    return ProgramState.MainMenu;
+                case ProgramState.DeleteProduct:
+                    DeleteProduct();
                     return ProgramState.MainMenu;
                 default:
                     return ProgramState.Exit;
@@ -142,6 +145,50 @@ namespace InventorySystem
                 WriteLine("|--------------------------|---------|");
             }
             ReadKey();
+        }
+
+        static void DeleteProduct()
+        {
+            Clear();
+            WriteLine("Delete product mode.");
+            Write("Product to delete: ");
+            string? product = null;
+            while (product == null)
+            {
+                product = ReadLine();
+                if (product == null)
+                {
+                    WriteLine(emptyErrorMessage);
+                    continue;
+                }
+                break;
+            }
+            
+            if (!productInventory.ContainsKey(product))
+            {
+                WriteLine("Product is not in the inventory.");
+                ReadKey();
+                return;
+            }
+            else
+            {
+                WriteLine("You're about to delete {0}.\nAre you sure you want to continue?\n[1] Yes\n[2] No", product);
+                int option = GetMenuOption();
+                switch (option)
+                {
+                    case 1:
+                        break;
+                    case >= 2:
+                    default:
+                        WriteLine("Nothing was deleted.");
+                        ReadKey();
+                        return;
+                }
+                productInventory.Remove(product);
+                WriteLine("{0} has been removed from inventory.", product);
+                ReadKey();
+                return;
+            }
         }
     }
 }
