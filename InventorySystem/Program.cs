@@ -22,10 +22,11 @@ namespace InventorySystem
             EditProduct
         }
         
-        private Dictionary<string,decimal> productInventory = new Dictionary<string, decimal>();
+        private static Dictionary<string, decimal> productInventory = new Dictionary<string, decimal>();
         static string welcomeMessage = "Welcome to Dynamics Inventory System.";
         static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Exit Inventory system";
-        static string emptyErrorMessage = "You have to write an option.";
+        static string optionErrorMessage = "Option must be a number";
+        static string emptyErrorMessage = "You have to write a valid option.";
         static string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
         static void Main()
         {
@@ -34,6 +35,7 @@ namespace InventorySystem
             {
                 currentState = MenuControl(currentState);
             }
+            Clear();
             WriteLine(exitMessage);
             ReadKey();
         }
@@ -43,11 +45,14 @@ namespace InventorySystem
             switch (state)
             {
                 case ProgramState.MainMenu:
+                    Console.Clear();
                     WriteLine(welcomeMessage);
                     WriteLine(mainMenuOptions);
                     int option = GetMenuOption();
                     return ChangeStateMainMenu(option);
-
+                case ProgramState.AddProduct:
+                    AppendNewProduct();
+                    return ProgramState.MainMenu;
                 default:
                     return ProgramState.Exit;
             }
@@ -61,12 +66,12 @@ namespace InventorySystem
                 string? userAnswer = ReadLine();
                 if (userAnswer == null)
                 {
-                    WriteLine(Inventory.emptyErrorMessage);
+                    WriteLine(emptyErrorMessage);
                     continue;
                 }
                 if (!int.TryParse(userAnswer, out option))
                 {
-                    WriteLine("Option must be a number");
+                    WriteLine(optionErrorMessage);
                     continue;
                 }
                 else
@@ -91,6 +96,35 @@ namespace InventorySystem
                 default:
                     return ProgramState.MainMenu;
             }
+        }
+
+        static void AppendNewProduct()
+        {
+            Clear();
+            WriteLine("Add product mode.");
+            Write("Product [Name]: ");
+            string? name = null;
+            while (name == null)
+            {
+                name = ReadLine();
+                if (name != null)
+                {
+                    break;
+                }
+                else
+                {
+                    WriteLine(emptyErrorMessage);
+                }
+            }
+            
+            Write("Product [Price]: ");
+            decimal price;
+            while (!decimal.TryParse(ReadLine(), out price))
+            {
+                WriteLine("You must enter a number.");
+            }
+
+            productInventory.Add(name, price);
         }
     }
 }
