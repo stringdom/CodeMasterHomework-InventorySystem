@@ -1,11 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 /*
-    TODO:
-    [x] Create a way to store, display and delete items to the productInventory
-    [x] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
-    [x] Edit price menu to change the price comfortably.
-    [x] Bugfixes to catch exceptions
+    TODO: [ ] Refactor this program to use the OOP patterns.
+    [ ] CRUD: Create, Read, Update, Delete.
+    [ ] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
+    [ ] Unit testing.
+    [ ] Bugfixing.
 */
 using System;
 using System.Globalization;
