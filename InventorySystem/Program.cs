@@ -4,7 +4,7 @@
     TODO:
     [x] Create a way to store, display and delete items to the productInventory
     [x] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
-    [ ] Edit price menu to change the price comfortably.
+    [x] Edit price menu to change the price comfortably.
     [x] Bugfixes to catch exceptions
 */
 using System;
@@ -29,7 +29,7 @@ namespace InventorySystem
 
         private static Dictionary<string, decimal> productInventory = new Dictionary<string, decimal>();
         static string welcomeMessage = "Welcome to Dynamics Inventory System.";
-        static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Exit Inventory system";
+        static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
         static string optionErrorMessage = "Option must be a number";
         static string emptyErrorMessage = "You have to write a valid option.";
         static string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
@@ -65,6 +65,9 @@ namespace InventorySystem
                     return ProgramState.MainMenu;
                 case ProgramState.DeleteProduct:
                     DeleteProduct();
+                    return ProgramState.MainMenu;
+                case ProgramState.EditProduct:
+                    EditPrice();
                     return ProgramState.MainMenu;
                 default:
                     return ProgramState.Exit;
@@ -104,7 +107,9 @@ namespace InventorySystem
                     return ProgramState.AddProduct;
                 case 3:
                     return ProgramState.DeleteProduct;
-                case >= 4:
+                case 4:
+                    return ProgramState.EditProduct;
+                case >= 5:
                     return ProgramState.Exit;
                 default:
                     return ProgramState.MainMenu;
@@ -120,11 +125,7 @@ namespace InventorySystem
             name = GetAText();
             
             Write("Product [Price]: ");
-            decimal price;
-            while (!decimal.TryParse(ReadLine(), out price))
-            {
-                WriteLine("You must enter a number.");
-            }
+            decimal price = GetPrice();
 
             try
             {
@@ -170,13 +171,7 @@ namespace InventorySystem
                 break;
             }
             
-            if (!productInventory.ContainsKey(product))
-            {
-                WriteLine("Product is not in the inventory.");
-                ReadKey();
-                return;
-            }
-            else
+            if (CheckProduct(product))
             {
                 WriteLine("You're about to delete {0}.\nAre you sure you want to continue?\n[1] Yes\n[2] No", product);
                 int option = GetMenuOption();
@@ -254,6 +249,46 @@ namespace InventorySystem
                 }
             }           
             return text;
+        }
+
+        static void EditPrice()
+        {
+            Clear();
+            WriteLine("Edit Price mode.");
+            Write("Product: ");
+            string product = GetAText();
+            if (CheckProduct(product))
+            {
+                Write("New price: ");
+                decimal price = GetPrice();
+                productInventory[product] = price;
+            }
+
+            return;
+        }
+
+        static bool CheckProduct(string product)
+        {
+            if (!productInventory.ContainsKey(product))
+            {
+                WriteLine("Product is not in the inventory.");
+                ReadKey();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        static decimal GetPrice()
+        {
+            decimal price;
+            while (!decimal.TryParse(ReadLine(), out price))
+            {
+                WriteLine("You must enter a number.");
+            }
+            return price;
         }
     }
 }
