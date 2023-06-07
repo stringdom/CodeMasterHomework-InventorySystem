@@ -67,27 +67,8 @@ namespace InventorySystem
 
     public class FileOperator
     {
-        public static CultureInfo? Culture;
-        public static string? PathName;
-        public FileOperator(CultureInfo culture, string path)
-        {
-            if (culture == null)
-            {
-                Culture = new("es-ES");
-            }
-            else
-            {
-                Culture = culture;
-            }
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                PathName = "inventory.csv";
-            }
-            else
-            {
-                PathName = path;
-            }
-        }
+        public static CultureInfo? Culture { get; set; } = new("es-ES");
+        public static string? PathName { get; set; } = "inventory.csv";
         public static Inventory LoadInventory()
         {
             if (string.IsNullOrWhiteSpace(PathName))
@@ -124,7 +105,7 @@ namespace InventorySystem
         public static void WriteInventory(Inventory inventory)
         {
             using StreamWriter inventoryFile = new(PathName);
-            foreach (var product in inventory) // TODO how do I get an enumerator for Inventory
+            foreach (var product in inventory) // TODO how do I get an enumerator for Inventory?
             {
                 inventoryFile.WriteLine("{0};{1}", product.Contents.Name, product.Contents.Price.ToString(Culture));
             }
