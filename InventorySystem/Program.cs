@@ -118,6 +118,17 @@ namespace InventorySystem
     }
     public class MenuControl
     {
+        enum ProgramState
+        {
+            MainMenu,
+            DisplayInventory,
+            AddProduct,
+            DeleteProduct,
+            EditProductPrice,
+            EditProductStock,
+            Exit
+        }
+
         static string welcomeMessage = "Welcome to Dynamics Inventory System.";
         static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
         static string optionErrorMessage = "Option must be a number";
@@ -125,6 +136,48 @@ namespace InventorySystem
         static string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
         static string numberErrorMessage = "You must enter a number.";
 
+        private ProgramState CurrentState { get; set; } = ProgramState.MainMenu;
+
+        public static void MenuUI(ProgramState state)
+        {
+            switch (state)
+            {
+                case ProgramState.MainMenu:
+                    Console.Clear();
+                    WriteLine(welcomeMessage);
+                    WriteLine(mainMenuOptions);
+                    int option = GetMenuOption();
+                    return ChangeStateMainMenu(option);
+                case ProgramState.AddProduct:
+                    AppendNewProduct();
+                    return ProgramState.MainMenu;
+                case ProgramState.DisplayInventory:
+                    DisplayInventory();
+                    return ProgramState.MainMenu;
+                case ProgramState.DeleteProduct:
+                    DeleteProduct();
+                    return ProgramState.MainMenu;
+                case ProgramState.EditProduct:
+                    EditPrice();
+                    return ProgramState.MainMenu;
+                default:
+                    return ProgramState.Exit;
+            }
+
+        }
+        public static ProgramState ChangeStateMainMenu(int option)
+        {
+            return option switch
+            {
+                1 => ProgramState.DisplayInventory,
+                2 => ProgramState.AddProduct,
+                3 => ProgramState.DeleteProduct,
+                4 => ProgramState.EditProductPrice,
+                5 => ProgramState.EditProductStock,
+                >= 6 => ProgramState.Exit,
+                _ => ProgramState.MainMenu,
+            };
+        }
         private static string GetAText()
         {
             string? text = null;
@@ -151,68 +204,7 @@ namespace InventorySystem
             }
             return price;
         }
-    }
-
-
-
-    }
-    public class InventoryUI
-    {
-        enum ProgramState
-        {
-            MainMenu,
-            AddProduct,
-            DeleteProduct,
-            DisplayInventory,
-            Exit,
-            EditProduct
-        }
-
-        public static CultureInfo culture = new CultureInfo("es-ES");
-
-        private static Dictionary<string, decimal> productInventory = new Dictionary<string, decimal>();
-        static void Main()
-        {
-            ProgramState currentState = ProgramState.MainMenu;
-            Inventory inventory = FileOperator.LoadInventory();
-            while (currentState != ProgramState.Exit)
-            {
-                currentState = MenuControl(currentState);
-            }
-            Clear();
-            WriteFile();
-            WriteLine(exitMessage);
-            ReadKey();
-        }
-
-        static ProgramState MenuControl(ProgramState state)
-        {
-            switch (state)
-            {
-                case ProgramState.MainMenu:
-                    Console.Clear();
-                    WriteLine(welcomeMessage);
-                    WriteLine(mainMenuOptions);
-                    int option = GetMenuOption();
-                    return ChangeStateMainMenu(option);
-                case ProgramState.AddProduct:
-                    AppendNewProduct();
-                    return ProgramState.MainMenu;
-                case ProgramState.DisplayInventory:
-                    DisplayInventory();
-                    return ProgramState.MainMenu;
-                case ProgramState.DeleteProduct:
-                    DeleteProduct();
-                    return ProgramState.MainMenu;
-                case ProgramState.EditProduct:
-                    EditPrice();
-                    return ProgramState.MainMenu;
-                default:
-                    return ProgramState.Exit;
-            }
-        }
-        
-        static int GetMenuOption()
+        private static int GetMenuOption()
         {
             int option = 0;
             while (true)
@@ -235,23 +227,25 @@ namespace InventorySystem
             }
         }
 
-        static ProgramState ChangeStateMainMenu(int option)
+    }
+
+
+
+    }
+    public class InventoryUI
+    {
+        static void Main()
         {
-            switch (option)
+            ProgramState currentState = ProgramState.MainMenu;
+            Inventory inventory = FileOperator.LoadInventory();
+            while (currentState != ProgramState.Exit)
             {
-                case 1:
-                    return ProgramState.DisplayInventory;
-                case 2:
-                    return ProgramState.AddProduct;
-                case 3:
-                    return ProgramState.DeleteProduct;
-                case 4:
-                    return ProgramState.EditProduct;
-                case >= 5:
-                    return ProgramState.Exit;
-                default:
-                    return ProgramState.MainMenu;
+                currentState = MenuControl(currentState);
             }
+            Clear();
+            WriteFile();
+            WriteLine(exitMessage);
+            ReadKey();
         }
 
         static void AppendNewProduct()
