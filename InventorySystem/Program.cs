@@ -65,22 +65,40 @@ namespace InventorySystem
         }
     }
 
-    public static class FileOperator
+    public class FileOperator
     {
-        public static CultureInfo Culture = new("es-ES")
-        { 
-            get
+        public static CultureInfo Culture;
+        public static string PathName;
+        public FileOperator(CultureInfo culture, string path)
+        {
+            if (culture == null)
             {
-                return Culture;
+                Culture = new("es-ES");
+            }
+            else
+            {
+                Culture = culture;
+            }
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                PathName = "inventory.csv";
+            }
+            else
+            {
+                PathName = path;
             }
         }
-        public static string PathName { get; set; }
-        public static Inventory LoadInventory(string filePath = PathName)
+        public static Inventory LoadInventory()
         {
-            Inventory inventoryInFile = new();
-            if (File.Exists(filePath))
+            if (string.IsNullOrWhiteSpace(PathName))
             {
-                using StreamReader inventoryFile = new(filePath, true);
+                throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
+            }
+
+            Inventory inventoryInFile = new();
+            if (File.Exists(PathName))
+            {
+                using StreamReader inventoryFile = new(PathName, true);
                 while (inventoryFile.Peek() >= 0)
                 {
                     string? line = inventoryFile.ReadLine();
@@ -99,7 +117,7 @@ namespace InventorySystem
             }
             else
             {
-                File.CreateText(filePath);
+                File.CreateText(PathName);
                 return inventoryInFile;
             }
         }
