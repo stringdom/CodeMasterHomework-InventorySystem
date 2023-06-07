@@ -137,8 +137,10 @@ namespace InventorySystem
         private static readonly string numberErrorMessage = "You must enter a number.";
 
         private ProgramState CurrentState { get; set; } = ProgramState.MainMenu;
-        private MenuControl()
+        public Inventory CurrentInventory { get; set; }
+        public MenuControl(Inventory inventory)
         {
+            CurrentInventory = inventory;
             CurrentState = MenuUI(CurrentState);
         }
 
@@ -169,7 +171,7 @@ namespace InventorySystem
             }
 
         }
-        public ProgramState ChangeStateMainMenu(int option)
+        private ProgramState ChangeStateMainMenu(int option)
         {
             return option switch
             {
@@ -210,7 +212,6 @@ namespace InventorySystem
         }
         private static int GetMenuOption()
         {
-            int option = 0;
             while (true)
             {
                 string? userAnswer = ReadLine();
@@ -219,7 +220,7 @@ namespace InventorySystem
                     WriteLine(emptyErrorMessage);
                     continue;
                 }
-                if (!int.TryParse(userAnswer, out option))
+                if (!int.TryParse(userAnswer, out int option))
                 {
                     WriteLine(optionErrorMessage);
                     continue;
@@ -230,26 +231,7 @@ namespace InventorySystem
                 }
             }
         }
-
-    }
-
-    }
-    public class InventoryUI
-    {
-        static void Main()
-        {
-            Inventory inventory = FileOperator.LoadInventory();
-            while (currentState != ProgramState.Exit)
-            {
-                currentState = MenuControl(currentState);
-            }
-            Clear();
-            WriteFile();
-            WriteLine(exitMessage);
-            ReadKey();
-        }
-
-        static void AppendNewProduct()
+        static void AppendNewProduct(Inventory inventory)
         {
             Clear();
             WriteLine("Add product mode.");
@@ -266,10 +248,26 @@ namespace InventorySystem
             }
             catch (ArgumentException)
             {
-                WriteLine("This product is already in the inventory.\nTry editing its price instead.");
+                WriteLine("This product is already in the inventory.\nTry a different option instead.");
                 ReadKey();
                 return;
             }
+
+
+    }
+
+    }
+    public class InventoryUI
+    {
+        static void Main()
+        {
+            Inventory inventory = FileOperator.LoadInventory();
+            MenuControl inventoryMenu = new(inventory);
+            Clear();
+            WriteFile();
+            WriteLine(exitMessage);
+            ReadKey();
+        }
 
         }
 
@@ -355,5 +353,4 @@ namespace InventorySystem
                 return true;
             }
         }
-
 }
