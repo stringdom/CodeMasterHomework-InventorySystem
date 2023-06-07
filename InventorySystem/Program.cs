@@ -65,6 +65,45 @@ namespace InventorySystem
         }
     }
 
+    public static class FileOperator
+    {
+        public static CultureInfo Culture = new("es-ES")
+        { 
+            get
+            {
+                return Culture;
+            }
+        }
+        public static string PathName { get; set; }
+        public static Inventory LoadInventory(string filePath = PathName)
+        {
+            Inventory inventoryInFile = new();
+            if (File.Exists(filePath))
+            {
+                using StreamReader inventoryFile = new(filePath, true);
+                while (inventoryFile.Peek() >= 0)
+                {
+                    string? line = inventoryFile.ReadLine();
+                    if (line != null)
+                    {
+                        string[] pair = line.Split(";");
+                        Product product = new(pair[0], decimal.Parse(pair[1], NumberStyles.AllowDecimalPoint, Culture));
+                        inventoryInFile.Add(product);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                return inventoryInFile;
+            }
+            else
+            {
+                File.CreateText(filePath);
+                return inventoryInFile;
+            }
+        }
+    }
     public class InventoryUI
     {
         enum ProgramState
