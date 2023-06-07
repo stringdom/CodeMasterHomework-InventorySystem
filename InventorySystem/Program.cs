@@ -67,8 +67,8 @@ namespace InventorySystem
 
     public class FileOperator
     {
-        public static CultureInfo Culture;
-        public static string PathName;
+        public static CultureInfo? Culture;
+        public static string? PathName;
         public FileOperator(CultureInfo culture, string path)
         {
             if (culture == null)
@@ -120,6 +120,15 @@ namespace InventorySystem
                 File.CreateText(PathName);
                 return inventoryInFile;
             }
+        }
+        public static void WriteInventory(Inventory inventory)
+        {
+            using StreamWriter inventoryFile = new(PathName);
+            foreach (var product in inventory) // TODO how do I get an enumerator for Inventory
+            {
+                inventoryFile.WriteLine("{0};{1}", product.Contents.Name, product.Contents.Price.ToString(Culture));
+            }
+            return;
         }
     }
     public class InventoryUI
@@ -299,47 +308,6 @@ namespace InventorySystem
                 ReadKey();
                 return;
             }
-        }
-
-        static void LoadFile(string filePath = "inventory.csv")
-        {
-            if (File.Exists(filePath))
-            {
-                using (StreamReader inventoryFile = new StreamReader(filePath, true))
-                {
-                    while (inventoryFile.Peek() >= 0)
-                    {
-                        string? line = inventoryFile.ReadLine();
-                        if (line != null)
-                        {
-                            string[] pair = line.Split(";");
-                            productInventory.Add(pair[0], decimal.Parse(pair[1], NumberStyles.AllowDecimalPoint, culture));
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    return;
-                }
-            }
-            else
-            {
-                File.CreateText(filePath);
-                return;
-            }
-        }
-
-        static void WriteFile(string filePath = "inventory.csv")
-        {
-            using (StreamWriter inventoryFile = new StreamWriter(filePath))
-            {
-                foreach (var product in productInventory)
-                {
-                    inventoryFile.WriteLine("{0};{1}", product.Key, product.Value.ToString(culture));
-                }
-            }
-            return;
         }
 
         static string GetAText()
