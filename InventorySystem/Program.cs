@@ -137,13 +137,17 @@ namespace InventorySystem
         private static readonly string numberErrorMessage = "You must enter a number.";
 
         private ProgramState CurrentState { get; set; } = ProgramState.MainMenu;
+        private MenuControl()
+        {
+            CurrentState = MenuUI(CurrentState);
+        }
 
-        public static ProgramState MenuUI(ProgramState state)
+        public ProgramState MenuUI(ProgramState state)
         {
             switch (state)
             {
                 case ProgramState.MainMenu:
-                    Console.Clear();
+                    Clear();
                     WriteLine(welcomeMessage);
                     WriteLine(mainMenuOptions);
                     int option = GetMenuOption();
@@ -165,7 +169,7 @@ namespace InventorySystem
             }
 
         }
-        public static ProgramState ChangeStateMainMenu(int option)
+        public ProgramState ChangeStateMainMenu(int option)
         {
             return option switch
             {
@@ -229,14 +233,11 @@ namespace InventorySystem
 
     }
 
-
-
     }
     public class InventoryUI
     {
         static void Main()
         {
-            ProgramState currentState = ProgramState.MainMenu;
             Inventory inventory = FileOperator.LoadInventory();
             while (currentState != ProgramState.Exit)
             {
