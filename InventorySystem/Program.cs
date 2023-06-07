@@ -129,16 +129,16 @@ namespace InventorySystem
             Exit
         }
 
-        static string welcomeMessage = "Welcome to Dynamics Inventory System.";
-        static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
-        static string optionErrorMessage = "Option must be a number";
-        static string emptyErrorMessage = "You have to write a valid option.";
-        static string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
-        static string numberErrorMessage = "You must enter a number.";
+        private static readonly string welcomeMessage = "Welcome to Dynamics Inventory System.";
+        private static readonly string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
+        private static readonly string optionErrorMessage = "Option must be a number";
+        private static readonly string emptyErrorMessage = "You have to write a valid option.";
+        private static readonly string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
+        private static readonly string numberErrorMessage = "You must enter a number.";
 
         private ProgramState CurrentState { get; set; } = ProgramState.MainMenu;
 
-        public static void MenuUI(ProgramState state)
+        public static ProgramState MenuUI(ProgramState state)
         {
             switch (state)
             {
