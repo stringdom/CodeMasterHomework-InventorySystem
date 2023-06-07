@@ -67,8 +67,8 @@ namespace InventorySystem
 
     public class FileOperator
     {
-        public static CultureInfo? Culture { get; set; } = new("es-ES");
-        public static string? PathName { get; set; } = "inventory.csv";
+        public static CultureInfo Culture { get; set; } = new("es-ES");
+        public static string PathName { get; set; } = "inventory.csv";
         public static Inventory LoadInventory()
         {
             if (string.IsNullOrWhiteSpace(PathName))
@@ -104,6 +104,10 @@ namespace InventorySystem
         }
         public static void WriteInventory(Inventory inventory)
         {
+            if (string.IsNullOrWhiteSpace(PathName))
+            {
+                throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
+            }
             using StreamWriter inventoryFile = new(PathName);
             foreach (var product in inventory) // TODO how do I get an enumerator for Inventory?
             {
@@ -111,6 +115,46 @@ namespace InventorySystem
             }
             return;
         }
+    }
+    public class MenuControl
+    {
+        static string welcomeMessage = "Welcome to Dynamics Inventory System.";
+        static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
+        static string optionErrorMessage = "Option must be a number";
+        static string emptyErrorMessage = "You have to write a valid option.";
+        static string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
+        static string numberErrorMessage = "You must enter a number.";
+
+        private static string GetAText()
+        {
+            string? text = null;
+            while (text == null)
+            {
+                text = ReadLine();
+                if (text != null)
+                {
+                    break;
+                }
+                else
+                {
+                    WriteLine(emptyErrorMessage);
+                }
+            }           
+            return text;
+        }
+        private static decimal GetPrice()
+        {
+            decimal price;
+            while (!decimal.TryParse(ReadLine(), out price))
+            {
+                WriteLine(numberErrorMessage);
+            }
+            return price;
+        }
+    }
+
+
+
     }
     public class InventoryUI
     {
@@ -127,15 +171,10 @@ namespace InventorySystem
         public static CultureInfo culture = new CultureInfo("es-ES");
 
         private static Dictionary<string, decimal> productInventory = new Dictionary<string, decimal>();
-        static string welcomeMessage = "Welcome to Dynamics Inventory System.";
-        static string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
-        static string optionErrorMessage = "Option must be a number";
-        static string emptyErrorMessage = "You have to write a valid option.";
-        static string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
         static void Main()
         {
             ProgramState currentState = ProgramState.MainMenu;
-            LoadFile();
+            Inventory inventory = FileOperator.LoadInventory();
             while (currentState != ProgramState.Exit)
             {
                 currentState = MenuControl(currentState);
@@ -291,23 +330,6 @@ namespace InventorySystem
             }
         }
 
-        static string GetAText()
-        {
-            string? text = null;
-            while (text == null)
-            {
-                text = ReadLine();
-                if (text != null)
-                {
-                    break;
-                }
-                else
-                {
-                    WriteLine(emptyErrorMessage);
-                }
-            }           
-            return text;
-        }
 
         static void EditPrice()
         {
@@ -339,14 +361,4 @@ namespace InventorySystem
             }
         }
 
-        static decimal GetPrice()
-        {
-            decimal price;
-            while (!decimal.TryParse(ReadLine(), out price))
-            {
-                WriteLine("You must enter a number.");
-            }
-            return price;
-        }
-    }
 }
