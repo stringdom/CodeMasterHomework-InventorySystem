@@ -230,9 +230,9 @@ namespace InventorySystem
                 case ProgramState.MainMenu:
                     MainMenu();
                     return ChangeStateMainMenu(GetMenuOption());
-                // case ProgramState.AddProduct:
-                //     AppendNewProduct();
-                //     return ProgramState.MainMenu;
+                case ProgramState.AddProduct:
+                    AppendNewProduct(CurrentInventory);
+                    return ProgramState.MainMenu;
                 // case ProgramState.DisplayInventory:
                 //     DisplayInventory();
                 //     return ProgramState.MainMenu;
@@ -319,16 +319,15 @@ namespace InventorySystem
         {
             Clear();
             WriteLine("Add product mode.");
-            string name;
             Write("Product [Name]: ");
-            name = GetAText();
-            
+            string name = GetAText();
             Write("Product [Price]: ");
             decimal price = GetPrice();
+            Product operativeProduct = new(name, price);
 
             try
             {
-                inventory.Add(new Product(name, price));
+                inventory.Add(operativeProduct);
             }
             catch (ArgumentException)
             {
@@ -337,9 +336,18 @@ namespace InventorySystem
                 return;
             }
 
-
-    }
-
+            Write("Current product [Stock]: ");
+            inventory.ChangeStock(operativeProduct, GetInt());
+        }
+        static int GetInt()
+        {
+            int number;
+            while (!int.TryParse(ReadLine(), out number))
+            {
+                WriteLine(numberErrorMessage);
+            }
+            return number;
+        }
     }
     public class InventorySystem
     {
