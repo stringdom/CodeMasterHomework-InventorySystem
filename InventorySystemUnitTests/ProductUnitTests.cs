@@ -42,5 +42,4 @@ public class ProductUnitTests
         decimal value = -12m;
         Assert.Throws<ArgumentException>(() => new Product(name, value));
     }
-
 }
