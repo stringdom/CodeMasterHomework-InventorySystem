@@ -28,8 +28,18 @@ namespace InventorySystem
     public class Inventory
     {
         public Dictionary<Product,int>? Contents { get; private set; }
-
-        public void Add(Product product, int stock = 0)
+        public Inventory()
+        {
+            if (Contents == null)
+            {
+                Contents.Add(new Product("", 0m), 1);
+            }
+        }
+        public Inventory(Product product)
+        {
+            Contents.Add(product, 1);
+        }
+        public void Add(Product product, int stock = 1)
         {
             try
             {
@@ -108,17 +118,17 @@ namespace InventorySystem
             {
                 throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
             }
-            using StreamWriter inventoryFile = new(PathName);
-            foreach (var product in inventory) // TODO how do I get an enumerator for Inventory?
-            {
-                inventoryFile.WriteLine("{0};{1}", product.Contents.Name, product.Contents.Price.ToString(Culture));
-            }
+            // using StreamWriter inventoryFile = new(PathName);
+            // foreach (var product in inventory) // TODO how do I get an enumerator for Inventory?
+            // {
+            //     inventoryFile.WriteLine("{0};{1}", product.Contents.Name, product.Contents.Price.ToString(Culture));
+            // }
             return;
         }
     }
     public class MenuControl
     {
-        enum ProgramState
+        public enum ProgramState
         {
             MainMenu,
             DisplayInventory,
@@ -136,12 +146,15 @@ namespace InventorySystem
         private static readonly string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
         private static readonly string numberErrorMessage = "You must enter a number.";
 
-        private ProgramState CurrentState { get; set; } = ProgramState.MainMenu;
+        public ProgramState CurrentState { get; private set; } = ProgramState.MainMenu;
         public Inventory CurrentInventory { get; set; }
         public MenuControl(Inventory inventory)
         {
             CurrentInventory = inventory;
-            CurrentState = MenuUI(CurrentState);
+            while (CurrentState != ProgramState.Exit)
+            {
+                CurrentState = MenuUI(CurrentState);
+            }
         }
 
         public ProgramState MenuUI(ProgramState state)
@@ -154,18 +167,18 @@ namespace InventorySystem
                     WriteLine(mainMenuOptions);
                     int option = GetMenuOption();
                     return ChangeStateMainMenu(option);
-                case ProgramState.AddProduct:
-                    AppendNewProduct();
-                    return ProgramState.MainMenu;
-                case ProgramState.DisplayInventory:
-                    DisplayInventory();
-                    return ProgramState.MainMenu;
-                case ProgramState.DeleteProduct:
-                    DeleteProduct();
-                    return ProgramState.MainMenu;
-                case ProgramState.EditProduct:
-                    EditPrice();
-                    return ProgramState.MainMenu;
+                // case ProgramState.AddProduct:
+                //     AppendNewProduct();
+                //     return ProgramState.MainMenu;
+                // case ProgramState.DisplayInventory:
+                //     DisplayInventory();
+                //     return ProgramState.MainMenu;
+                // case ProgramState.DeleteProduct:
+                //     DeleteProduct();
+                //     return ProgramState.MainMenu;
+                // case ProgramState.EditProduct:
+                //     EditPrice();
+                //     return ProgramState.MainMenu;
                 default:
                     return ProgramState.Exit;
             }
@@ -244,7 +257,7 @@ namespace InventorySystem
 
             try
             {
-                productInventory.Add(name, price);
+                inventory.Add(new Product(name, price));
             }
             catch (ArgumentException)
             {
@@ -257,16 +270,18 @@ namespace InventorySystem
     }
 
     }
-    public class InventoryUI
+    public class InventorySystem
     {
         static void Main()
         {
             Inventory inventory = FileOperator.LoadInventory();
             MenuControl inventoryMenu = new(inventory);
-            Clear();
-            WriteFile();
-            WriteLine(exitMessage);
-            ReadKey();
+            if (inventoryMenu.CurrentState == MenuControl.ProgramState.Exit)
+            {
+                ReadKey();
+                return;
+            }
+            // WriteFile();
         }
 
         }
@@ -277,11 +292,11 @@ namespace InventorySystem
             WriteLine("List of products and prices.\n");
             WriteLine("|       Product name       |  Price  |");
             WriteLine("|--------------------------|---------|");
-            foreach (var product in productInventory)
-            {
-                WriteLine("|{0,-26}|${1,8:N2}|", product.Key, productInventory[product.Key]);
-                WriteLine("|--------------------------|---------|");
-            }
+            // foreach (var product in productInventory)
+            // {
+            //     WriteLine("|{0,-26}|${1,8:N2}|", product.Key, productInventory[product.Key]);
+            //     WriteLine("|--------------------------|---------|");
+            // }
             ReadKey();
         }
 
@@ -353,4 +368,5 @@ namespace InventorySystem
                 return true;
             }
         }
-}
+    
+    }
