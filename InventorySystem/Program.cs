@@ -22,10 +22,21 @@ namespace InventorySystem
             Name = name;
             Price = price;
         }
-        public void ChangePrice(decimal price) => Price = price;
+        public void ChangePrice(decimal value) => Price = value;
         public bool IsEqual(string name)
         {
             if (name == Name)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool IsEqual(decimal value)
+        {
+            if (value == Price)
             {
                 return true;
             }
@@ -83,13 +94,13 @@ namespace InventorySystem
         {
             Contents[product] = stock;
         }
-        public Product GetProduct(string name)
-        {
-            if (Contents.ContainsKey(Product.GetProduct(name)))
-            {
-                return Contents[Product.GetProduct(name)];
-            }
-        }
+        // public Product GetProduct(string name)
+        // {
+        //     if (Contents.ContainsKey(Product.GetProduct(name)))
+        //     {
+        //         return Contents[Product.GetProduct(name)];
+        //     }
+        // }
     }
 
     public class FileOperator
@@ -296,13 +307,15 @@ namespace InventorySystem
     {
         static void Main()
         {
-            Inventory inventory = FileOperator.LoadInventory();
-            MenuControl inventoryMenu = new(inventory);
-            if (inventoryMenu.CurrentState == MenuControl.ProgramState.Exit)
-            {
-                ReadKey();
-                return;
-            }
+            Product myProduct = new("Tea", 12m);
+            WriteLine("We have {0}, and it costs {1:c2}", myProduct.Name, myProduct.Price);
+            // Inventory inventory = FileOperator.LoadInventory();
+            // MenuControl inventoryMenu = new(inventory);
+            // if (inventoryMenu.CurrentState == MenuControl.ProgramState.Exit)
+            // {
+            //     ReadKey();
+            //     return;
+            // }
             // WriteFile();
         }
 
