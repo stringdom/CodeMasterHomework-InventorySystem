@@ -184,11 +184,11 @@ namespace InventorySystem
             {
                 throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
             }
-            // using StreamWriter inventoryFile = new(PathName);
-            // foreach (var product in inventory) // TODO how do I get an enumerator for Inventory?
-            // {
-            //     inventoryFile.WriteLine("{0};{1}", product.Contents.Name, product.Contents.Price.ToString(Culture));
-            // }
+            using StreamWriter inventoryFile = new(PathName);
+            foreach (var product in inventory.Contents)
+            {
+                inventoryFile.WriteLine("{0};{1};{2}", product.Key.Name, product.Key.Price.ToString(Culture), inventory.Contents[product.Key]);
+            }
             return;
         }
     }
