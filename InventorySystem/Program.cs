@@ -105,23 +105,27 @@ namespace InventorySystem
                 return;
             }
         }
+        public void Remove(string name)
+        {
+            throw new NotImplementedException();
+        }
         public void ChangeStock(Product product, int stock)
         {
             Catalog[product] = stock;
         }
         public void ChangeStock(string name, int stock)
         {
-            foreach (var item in Catalog)
+            try
             {
-                if (item.Key.Name == name)
-                {
-                    Catalog[item.Key] = stock;
-                    return;
-                }
-                else
-                {
-                    continue;
-                }
+                Product product = GetProduct(name);
+                ChangeStock(product, stock);
+                WriteLine("Product {0} stock changed to {1:N0}", name, stock);
+                return;
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("Product is not in the inventory.");
+                return;
             }
         }
         public Product GetProduct(string name)
