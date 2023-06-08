@@ -75,17 +75,7 @@ namespace InventorySystem
 
     public class Inventory
     {
-        public Dictionary<Product,int> Contents
-        {
-            get
-            {
-                return Contents;
-            }
-        private set
-            {
-                Contents.Add(new Product("", 0m), 1);
-            }
-        }
+        public Dictionary<Product,int>? Contents;
         public void Add(Product product, int stock = 1)
         {
             try
@@ -113,12 +103,26 @@ namespace InventorySystem
                 WriteLine("This product doesn't exist in the inventory.");
                 ReadKey();
                 return;
-
             }
         }
         public void ChangeStock(Product product, int stock)
         {
             Contents[product] = stock;
+        }
+        public void ChangeStock(string name, int stock)
+        {
+            foreach (var item in Contents)
+            {
+                if (item.Key.Name == name)
+                {
+                    Contents[item.Key] = stock;
+                    return;
+                }
+                else
+                {
+                    continue;
+                }
+            }
         }
         // public Product GetProduct(string name)
         // {
