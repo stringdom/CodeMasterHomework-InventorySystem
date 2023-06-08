@@ -16,9 +16,7 @@ public class ProductUnitTests
     {
         string name = "";
         decimal value = 12m;
-        Assert. Product testProduct = new(name, value);
-        Assert.Equal(name, testProduct.Name);
-
+        Assert.Throws(ArgumentException, Product testProduct = new(name, value));
     }
     [Fact]
     public void CheckProductName()

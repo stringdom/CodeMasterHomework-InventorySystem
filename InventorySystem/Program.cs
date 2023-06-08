@@ -25,7 +25,7 @@ namespace InventorySystem
             }
             else
             {
-                throw new ArgumentException("Name cannot be null or empty.")
+                throw new ArgumentException("Name cannot be null or empty.");
             }
             Price = price;
         }
