@@ -23,21 +23,31 @@ namespace InventorySystem
             Price = price;
         }
         public void ChangePrice(decimal price) => Price = price;
+        public bool IsEqual(string name)
+        {
+            if (name == Name)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     public class Inventory
     {
-        public Dictionary<Product,int>? Contents { get; private set; }
-        public Inventory()
+        public Dictionary<Product,int> Contents
         {
-            if (Contents == null)
+            get
+            {
+                return Contents;
+            }
+        private set
             {
                 Contents.Add(new Product("", 0m), 1);
             }
-        }
-        public Inventory(Product product)
-        {
-            Contents.Add(product, 1);
         }
         public void Add(Product product, int stock = 1)
         {
@@ -72,6 +82,13 @@ namespace InventorySystem
         public void ChangeStock(Product product, int stock)
         {
             Contents[product] = stock;
+        }
+        public Product GetProduct(string name)
+        {
+            if (Contents.ContainsKey(Product.GetProduct(name)))
+            {
+                return Contents[Product.GetProduct(name)];
+            }
         }
     }
 
@@ -162,11 +179,8 @@ namespace InventorySystem
             switch (state)
             {
                 case ProgramState.MainMenu:
-                    Clear();
-                    WriteLine(welcomeMessage);
-                    WriteLine(mainMenuOptions);
-                    int option = GetMenuOption();
-                    return ChangeStateMainMenu(option);
+                    MainMenu();
+                    return ChangeStateMainMenu(GetMenuOption());
                 // case ProgramState.AddProduct:
                 //     AppendNewProduct();
                 //     return ProgramState.MainMenu;
@@ -184,6 +198,14 @@ namespace InventorySystem
             }
 
         }
+
+        private void MainMenu()
+        {
+            Clear();
+            WriteLine(welcomeMessage);
+            WriteLine(mainMenuOptions);
+        }
+
         private ProgramState ChangeStateMainMenu(int option)
         {
             return option switch
@@ -286,87 +308,87 @@ namespace InventorySystem
 
         }
 
-        static void DisplayInventory()
-        {
-            Clear();
-            WriteLine("List of products and prices.\n");
-            WriteLine("|       Product name       |  Price  |");
-            WriteLine("|--------------------------|---------|");
-            // foreach (var product in productInventory)
-            // {
-            //     WriteLine("|{0,-26}|${1,8:N2}|", product.Key, productInventory[product.Key]);
-            //     WriteLine("|--------------------------|---------|");
-            // }
-            ReadKey();
-        }
+        // static void DisplayInventory()
+        // {
+        //     Clear();
+        //     WriteLine("List of products and prices.\n");
+        //     WriteLine("|       Product name       |  Price  |");
+        //     WriteLine("|--------------------------|---------|");
+        //     // foreach (var product in productInventory)
+        //     // {
+        //     //     WriteLine("|{0,-26}|${1,8:N2}|", product.Key, productInventory[product.Key]);
+        //     //     WriteLine("|--------------------------|---------|");
+        //     // }
+        //     ReadKey();
+        // }
 
-        static void DeleteProduct()
-        {
-            Clear();
-            WriteLine("Delete product mode.");
-            Write("Product to delete: ");
-            string? product = null;
-            while (product == null)
-            {
-                product = ReadLine();
-                if (product == null)
-                {
-                    WriteLine(emptyErrorMessage);
-                    continue;
-                }
-                break;
-            }
+        // static void DeleteProduct()
+        // {
+        //     Clear();
+        //     WriteLine("Delete product mode.");
+        //     Write("Product to delete: ");
+        //     string? product = null;
+        //     while (product == null)
+        //     {
+        //         product = ReadLine();
+        //         if (product == null)
+        //         {
+        //             WriteLine(emptyErrorMessage);
+        //             continue;
+        //         }
+        //         break;
+        //     }
             
-            if (CheckProduct(product))
-            {
-                WriteLine("You're about to delete {0}.\nAre you sure you want to continue?\n[1] Yes\n[2] No", product);
-                int option = GetMenuOption();
-                switch (option)
-                {
-                    case 1:
-                        break;
-                    case >= 2:
-                    default:
-                        WriteLine("Nothing was deleted.");
-                        ReadKey();
-                        return;
-                }
-                productInventory.Remove(product);
-                WriteLine("{0} has been removed from inventory.", product);
-                ReadKey();
-                return;
-            }
-        }
+            // if (CheckProduct(product))
+            // {
+            //     WriteLine("You're about to delete {0}.\nAre you sure you want to continue?\n[1] Yes\n[2] No", product);
+            //     int option = GetMenuOption();
+            //     switch (option)
+            //     {
+            //         case 1:
+            //             break;
+            //         case >= 2:
+            //         default:
+            //             WriteLine("Nothing was deleted.");
+            //             ReadKey();
+            //             return;
+            //     }
+            //     productInventory.Remove(product);
+            //     WriteLine("{0} has been removed from inventory.", product);
+            //     ReadKey();
+            //     return;
+            // }
+        // }
 
 
-        static void EditPrice()
-        {
-            Clear();
-            WriteLine("Edit Price mode.");
-            Write("Product: ");
-            string product = GetAText();
-            if (CheckProduct(product))
-            {
-                Write("New price: ");
-                decimal price = GetPrice();
-                productInventory[product] = price;
-            }
+        // static void EditPrice()
+        // {
+        //     Clear();
+        //     WriteLine("Edit Price mode.");
+        //     Write("Product: ");
+        //     string product = GetAText();
+        //     if (CheckProduct(product))
+        //     {
+        //         Write("New price: ");
+        //         decimal price = GetPrice();
+        //         productInventory[product] = price;
+        //     }
 
-            return;
-        }
+        //     return;
+        // }
 
-        static bool CheckProduct(string product)
-        {
-            if (!productInventory.ContainsKey(product))
-            {
-                WriteLine("Product is not in the inventory.");
-                ReadKey();
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
+        // static bool CheckProduct(string product)
+        // {
+        //     if (!productInventory.ContainsKey(product))
+        //     {
+        //         WriteLine("Product is not in the inventory.");
+        //         ReadKey();
+        //         return false;
+        //     }
+        //     else
+        //     {
+        //         return true;
+        //     }
+        // }
     
     }
