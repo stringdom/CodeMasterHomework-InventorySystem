@@ -75,12 +75,12 @@ namespace InventorySystem
 
     public class Inventory
     {
-        public Dictionary<Product,int>? Contents { get; set; }
+        public Dictionary<Product,int>? Catalog { get; set; }
         public void Add(Product product, int stock = 1)
         {
             try
             {
-                Contents.Add(product, stock);
+                Catalog.Add(product, stock);
                 WriteLine("Product: {0} added to inventory.", product.Name);
                 return;
             }
@@ -95,7 +95,7 @@ namespace InventorySystem
         {
             try
             {
-                Contents.Remove(product);
+                Catalog.Remove(product);
                 WriteLine("Product: {0} deleted.", product.Name);
             }
             catch (ArgumentException)
@@ -107,15 +107,15 @@ namespace InventorySystem
         }
         public void ChangeStock(Product product, int stock)
         {
-            Contents[product] = stock;
+            Catalog[product] = stock;
         }
         public void ChangeStock(string name, int stock)
         {
-            foreach (var item in Contents)
+            foreach (var item in Catalog)
             {
                 if (item.Key.Name == name)
                 {
-                    Contents[item.Key] = stock;
+                    Catalog[item.Key] = stock;
                     return;
                 }
                 else
@@ -126,7 +126,7 @@ namespace InventorySystem
         }
         public Product GetProduct(string name)
         {
-            foreach (var item in Contents.Keys)
+            foreach (var item in Catalog.Keys)
             {
                 if (item.IsEqual(name))
                 {
@@ -185,9 +185,9 @@ namespace InventorySystem
                 throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
             }
             using StreamWriter inventoryFile = new(PathName);
-            foreach (var product in inventory.Contents)
+            foreach (var product in inventory.Catalog)
             {
-                inventoryFile.WriteLine("{0};{1};{2}", product.Key.Name, product.Key.Price.ToString(Culture), inventory.Contents[product.Key]);
+                inventoryFile.WriteLine("{0};{1};{2}", product.Key.Name, product.Key.Price.ToString(Culture), inventory.Catalog[product.Key]);
             }
             return;
         }
