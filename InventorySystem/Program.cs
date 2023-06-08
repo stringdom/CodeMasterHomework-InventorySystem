@@ -75,7 +75,7 @@ namespace InventorySystem
 
     public class Inventory
     {
-        public Dictionary<Product,int>? Contents;
+        public Dictionary<Product,int>? Contents { get; set; }
         public void Add(Product product, int stock = 1)
         {
             try
@@ -124,13 +124,21 @@ namespace InventorySystem
                 }
             }
         }
-        // public Product GetProduct(string name)
-        // {
-        //     if (Contents.ContainsKey(Product.GetProduct(name)))
-        //     {
-        //         return Contents[Product.GetProduct(name)];
-        //     }
-        // }
+        public Product GetProduct(string name)
+        {
+            foreach (var item in Contents.Keys)
+            {
+                if (item.IsEqual(name))
+                {
+                    return item;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            throw new ArgumentException("Product is not in inventory.");
+        }
     }
 
     public class FileOperator
