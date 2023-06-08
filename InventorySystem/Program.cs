@@ -19,7 +19,14 @@ namespace InventorySystem
         public decimal Price { get; private set; } = 0;
         public Product(string name, decimal price)
         {
-            Name = name;
+            if(!name.IsNullOrWhiteSpace)
+            {
+                Name = name;
+            }
+            else
+            {
+                throw new ArgumentException("Name cannot be null or empty.")
+            }
             Price = price;
         }
         public void ChangePrice(decimal value) => Price = value;
