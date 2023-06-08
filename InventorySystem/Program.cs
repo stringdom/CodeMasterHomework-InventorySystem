@@ -19,7 +19,7 @@ namespace InventorySystem
         public decimal Price { get; private set; } = 0;
         public Product(string name, decimal price)
         {
-            if(!name.IsNullOrWhiteSpace)
+            if(!string.IsNullOrWhiteSpace(name))
             {
                 Name = name;
             }
