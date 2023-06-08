@@ -27,7 +27,15 @@ namespace InventorySystem
             {
                 throw new ArgumentException("Name cannot be null or empty.");
             }
-            Price = price;
+
+            if (price < 0)
+            {
+                throw new ArgumentException("Price can't be negative.");
+            }
+            else
+            {
+                Price = price;
+            }
         }
         public void ChangePrice(decimal value) => Price = value;
         public bool IsEqual(string name)

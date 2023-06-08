@@ -16,7 +16,7 @@ public class ProductUnitTests
     {
         string name = "";
         decimal value = 12m;
-        Product myProduct = new(name, value);
+        Assert.Throws<ArgumentException>((Action)(() => new Product(name,value)));
     }
     [Fact]
     public void CheckProductName()
@@ -26,4 +26,12 @@ public class ProductUnitTests
         Product testProduct = new(name, value);
         Assert.True(testProduct.IsEqual(name));
     }
+    [Fact]
+    public void NegativePrice()
+    {
+        string name = "Tea";
+        decimal value = -12m;
+        Assert.Throws<ArgumentException>((Action)(() => new Product(name, value)));
+    }
+
 }
