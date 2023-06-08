@@ -28,6 +28,14 @@ public class ProductUnitTests
         Assert.True(testProduct.IsEqual(name));
     }
     [Fact]
+    public void CheckPrice()
+    {
+        string name = "Tea";
+        decimal value = 12m;
+        Product testProduct = new(name, value);
+        Assert.True(testProduct.IsEqual(value));
+    }
+    [Fact]
     public void NegativePrice()
     {
         string name = "Tea";

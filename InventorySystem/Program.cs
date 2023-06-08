@@ -37,7 +37,18 @@ namespace InventorySystem
                 Price = price;
             }
         }
-        public void ChangePrice(decimal value) => Price = value;
+        public void ChangePrice(decimal value)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException("Price can't be negative.");
+            }
+            else
+            {
+                Price = value;
+            }
+        }
+
         public bool IsEqual(string name)
         {
             if (name == Name)
