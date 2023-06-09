@@ -1,10 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 /*
-    TODO: [ ] Refactor this program to use the OOP patterns.
-    [ ] CRUD: Create, Read, Update, Delete.
-    [ ] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
-    [ ] Console based user inteface
+    TODO: [x] Refactor this program to use the OOP patterns.
+    [x] CRUD: Create, Read, Update, Delete.
+    [x] Store the information as a CSV text file in the root directory to read on load time and to write changes to.
+    [x] Console based user inteface
     [ ] Unit testing.
     [ ] Bugfixing.
 */
@@ -237,7 +237,15 @@ namespace InventorySystem
         }
 
         private static readonly string welcomeMessage = "Welcome to Dynamics Inventory System.";
-        private static readonly string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
+        private static readonly string mainMenuOptions = """
+            Choose an option and press [Enter]:
+             [1] Display all products in inventory.
+             [2] Add a new product.
+             [3] Delete a product.
+             [4] Edit price of product.
+             [5] Edit stock of product.
+             [6] Exit Inventory system.
+            """;
         private static readonly string optionErrorMessage = "Option must be a number";
         private static readonly string emptyErrorMessage = "You have to write a valid option.";
         private static readonly string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
@@ -252,6 +260,9 @@ namespace InventorySystem
             {
                 CurrentState = MenuUI(CurrentState);
             }
+            Clear();
+            WriteLine(exitMessage);
+            ReadKey();
         }
 
         public ProgramState MenuUI(ProgramState state)
@@ -273,8 +284,10 @@ namespace InventorySystem
                 case ProgramState.EditProductPrice:
                     EditPrice(CurrentInventory);
                     return ProgramState.MainMenu;
+                case ProgramState.EditProductStock:
+                    EditStock(CurrentInventory);
+                    return ProgramState.MainMenu;
                 default:
-                    WriteLine(exitMessage);
                     return ProgramState.Exit;
             }
 
@@ -440,6 +453,25 @@ namespace InventorySystem
             }
             return;
         }
+        public void EditStock(Inventory inventory)
+        {
+            Clear();
+            WriteLine("Edit stock mode");
+            Write("Product to edit: ");
+            string name = GetAText();
+            WriteLine();
+            Write("New stock in inventory: ");
+            try
+            {
+                inventory.Catalog[inventory.GetProduct(name)] = GetInt();
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("Product not in inventory.");
+                ReadKey();
+            }
+            return;
+        }
 
         // static bool CheckProduct(Product product)
         // {
@@ -464,7 +496,6 @@ namespace InventorySystem
             inventory = FileOperator.LoadInventory(inventory);
             _ = new MenuControl(inventory);
             FileOperator.WriteInventory(inventory);
-            ReadKey();
         }
     }
     
