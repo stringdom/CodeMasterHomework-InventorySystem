@@ -163,6 +163,14 @@ namespace InventorySystem
             }
             throw new ArgumentException("Product is not in inventory.");
         }
+        public void ChangePrice(Product product, decimal price) // It's not possible to change the key, for both name and price constitute the dictionary key. What we can do is to delete the old product and add it again, with the new price.
+        {
+            int preserveStockValue = Catalog[product];
+            Catalog.Remove(product);
+            product.ChangePrice(price);
+            Catalog.Add(product, preserveStockValue);
+            return;
+        }
     }
 
     public class FileOperator
@@ -262,9 +270,9 @@ namespace InventorySystem
                 case ProgramState.DeleteProduct:
                     DeleteProduct(CurrentInventory);
                     return ProgramState.MainMenu;
-                // case ProgramState.EditProduct:
-                //     EditPrice();
-                //     return ProgramState.MainMenu;
+                case ProgramState.EditProductPrice:
+                    EditPrice(CurrentInventory);
+                    return ProgramState.MainMenu;
                 default:
                     WriteLine(exitMessage);
                     return ProgramState.Exit;
@@ -394,7 +402,20 @@ namespace InventorySystem
             Write("Product to delete: ");
             try
             {
-                inventory.RemoveProduct(GetAText(), true);
+                Product product = inventory.GetProduct(GetAText());
+                WriteLine("You're about to delete {0}.\nAre you sure you want to continue?\n[1] Yes\n[2] No", product.Name);
+                switch (GetMenuOption())
+                {
+                    case 1:
+                        break;
+                    case >= 2:
+                    default:
+                        WriteLine("Nothing was deleted.");
+                        ReadKey();
+                        return;
+                }
+                inventory.RemoveProduct(product, true);
+                return;
             }
             catch (ArgumentException)
             {
@@ -402,6 +423,37 @@ namespace InventorySystem
             }
             return;
         }
+        static void EditPrice(Inventory inventory)
+        {
+            Clear();
+            WriteLine("Edit Price mode.");
+            Write("Product: ");
+            try
+            {
+                Product product =  inventory.GetProduct(GetAText());
+                Write("New price: ");
+                inventory.ChangePrice(product, GetPrice());
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("Product doesn't exist in inventory.");
+            }
+            return;
+        }
+
+        // static bool CheckProduct(Product product)
+        // {
+        //     if (!productInventory.ContainsKey(product))
+        //     {
+        //         WriteLine("Product is not in the inventory.");
+        //         ReadKey();
+        //         return false;
+        //     }
+        //     else
+        //     {
+        //         return true;
+        //     }
+        // }
 
     }
     public class InventorySystem
@@ -415,58 +467,5 @@ namespace InventorySystem
             ReadKey();
         }
     }
-
-            
-            // if (CheckProduct(product))
-            // {
-            //     WriteLine("You're about to delete {0}.\nAre you sure you want to continue?\n[1] Yes\n[2] No", product);
-            //     int option = GetMenuOption();
-            //     switch (option)
-            //     {
-            //         case 1:
-            //             break;
-            //         case >= 2:
-            //         default:
-            //             WriteLine("Nothing was deleted.");
-            //             ReadKey();
-            //             return;
-            //     }
-            //     productInventory.Remove(product);
-            //     WriteLine("{0} has been removed from inventory.", product);
-            //     ReadKey();
-            //     return;
-            // }
-        // }
-
-
-        // static void EditPrice()
-        // {
-        //     Clear();
-        //     WriteLine("Edit Price mode.");
-        //     Write("Product: ");
-        //     string product = GetAText();
-        //     if (CheckProduct(product))
-        //     {
-        //         Write("New price: ");
-        //         decimal price = GetPrice();
-        //         productInventory[product] = price;
-        //     }
-
-        //     return;
-        // }
-
-        // static bool CheckProduct(string product)
-        // {
-        //     if (!productInventory.ContainsKey(product))
-        //     {
-        //         WriteLine("Product is not in the inventory.");
-        //         ReadKey();
-        //         return false;
-        //     }
-        //     else
-        //     {
-        //         return true;
-        //     }
-        // }
     
     }
