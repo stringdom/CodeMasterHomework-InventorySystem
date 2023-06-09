@@ -114,11 +114,22 @@ namespace InventorySystem
         }
         public void Remove(string name)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Catalog.Remove(GetProduct(name));
+                WriteLine("Product {0} was removed from the inventory.", name);
+                return;
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("The product doesn't exist in the inventory.");
+                return;
+            }
         }
         public void ChangeStock(Product product, int stock)
         {
             Catalog[product] = stock;
+            return;
         }
         public void ChangeStock(string name, int stock)
         {
