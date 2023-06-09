@@ -258,9 +258,9 @@ namespace InventorySystem
                 case ProgramState.DisplayInventory:
                     DisplayInventory(CurrentInventory);
                     return ProgramState.MainMenu;
-                // case ProgramState.DeleteProduct:
-                //     DeleteProduct();
-                //     return ProgramState.MainMenu;
+                case ProgramState.DeleteProduct:
+                    DeleteProduct(CurrentInventory);
+                    return ProgramState.MainMenu;
                 // case ProgramState.EditProduct:
                 //     EditPrice();
                 //     return ProgramState.MainMenu;
@@ -360,6 +360,7 @@ namespace InventorySystem
 
             Write("Current product [Stock]: ");
             inventory.ChangeStock(operativeProduct, GetInt());
+            return;
         }
         static int GetInt()
         {
@@ -383,7 +384,21 @@ namespace InventorySystem
             }
             ReadKey();
         }
-
+        static void DeleteProduct(Inventory inventory)
+        {
+            Clear();
+            WriteLine("Delete product mode.");
+            Write("Product to delete: ");
+            try
+            {
+                inventory.Remove(GetText());
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("Product not found in inventory.")
+            }
+            return;
+        }
 
     }
     public class InventorySystem
@@ -402,22 +417,6 @@ namespace InventorySystem
 
         }
 
-        // static void DeleteProduct()
-        // {
-        //     Clear();
-        //     WriteLine("Delete product mode.");
-        //     Write("Product to delete: ");
-        //     string? product = null;
-        //     while (product == null)
-        //     {
-        //         product = ReadLine();
-        //         if (product == null)
-        //         {
-        //             WriteLine(emptyErrorMessage);
-        //             continue;
-        //         }
-        //         break;
-        //     }
             
             // if (CheckProduct(product))
             // {
