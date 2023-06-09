@@ -391,13 +391,14 @@ namespace InventorySystem
             Write("Product to delete: ");
             try
             {
-                inventory.Remove(GetText());
+                inventory.Remove(GetAText());
+                return;
             }
             catch (ArgumentException)
             {
-                WriteLine("Product not found in inventory.")
+                WriteLine("Product not found in inventory.");
+                return;
             }
-            return;
         }
 
     }
