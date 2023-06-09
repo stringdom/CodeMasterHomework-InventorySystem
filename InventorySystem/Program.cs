@@ -255,9 +255,9 @@ namespace InventorySystem
                 case ProgramState.AddProduct:
                     AppendNewProduct(CurrentInventory);
                     return ProgramState.MainMenu;
-                // case ProgramState.DisplayInventory:
-                //     DisplayInventory();
-                //     return ProgramState.MainMenu;
+                case ProgramState.DisplayInventory:
+                    DisplayInventory(CurrentInventory);
+                    return ProgramState.MainMenu;
                 // case ProgramState.DeleteProduct:
                 //     DeleteProduct();
                 //     return ProgramState.MainMenu;
@@ -370,13 +370,26 @@ namespace InventorySystem
             }
             return number;
         }
+        static void DisplayInventory(Inventory inventory)
+        {
+            Clear();
+            WriteLine("List of products and prices.\n");
+            WriteLine("|       Product name       |  Price  |  Stock  |");
+            WriteLine("|--------------------------|---------|---------|");
+            foreach (var product in inventory.Catalog)
+            {
+                WriteLine("|{0,-26}|${1,8:N2}|{2,8:N0}|", product.Key.Name, product.Key.Price, product.Value);
+                WriteLine("|--------------------------|---------|---------|");
+            }
+            ReadKey();
+        }
+
+
     }
     public class InventorySystem
     {
         static void Main()
         {
-            Product myProduct = new("Tea", 12m);
-            WriteLine("We have {0}, and it costs {1:c2}", myProduct.Name, myProduct.Price);
             // Inventory inventory = FileOperator.LoadInventory();
             // MenuControl inventoryMenu = new(inventory);
             // if (inventoryMenu.CurrentState == MenuControl.ProgramState.Exit)
@@ -388,20 +401,6 @@ namespace InventorySystem
         }
 
         }
-
-        // static void DisplayInventory()
-        // {
-        //     Clear();
-        //     WriteLine("List of products and prices.\n");
-        //     WriteLine("|       Product name       |  Price  |");
-        //     WriteLine("|--------------------------|---------|");
-        //     // foreach (var product in productInventory)
-        //     // {
-        //     //     WriteLine("|{0,-26}|${1,8:N2}|", product.Key, productInventory[product.Key]);
-        //     //     WriteLine("|--------------------------|---------|");
-        //     // }
-        //     ReadKey();
-        // }
 
         // static void DeleteProduct()
         // {
