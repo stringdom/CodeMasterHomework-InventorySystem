@@ -75,7 +75,7 @@ namespace InventorySystem
 
     public class Inventory
     {
-        public Dictionary<Product,int>? Catalog { get; set; }
+        public Dictionary<Product,int> Catalog { get; set; }
         public Inventory()
         {
             if (Catalog is not null)
@@ -89,8 +89,6 @@ namespace InventorySystem
         }
         public void Add(Product product, int stock = 1)
         {
-            if (Catalog is not null)
-            {
                 try
                 {
                     Catalog.Add(product, stock);
@@ -103,12 +101,9 @@ namespace InventorySystem
                     ReadKey();
                     return;
                 }
-            }
         }
         public void Remove(Product product)
         {
-            if (Catalog is not null)
-            {
                 try
                 {
                     Catalog.Remove(product);
@@ -120,12 +115,9 @@ namespace InventorySystem
                     ReadKey();
                     return;
                 }
-            }
         }
         public void Remove(string name)
         {
-            if (Catalog is not null)
-            {
                 try
                 {
                     Catalog.Remove(GetProduct(name));
@@ -137,15 +129,11 @@ namespace InventorySystem
                     WriteLine("The product doesn't exist in the inventory.");
                     return;
                 }
-            }
         }
         public void ChangeStock(Product product, int stock)
         {
-            if (Catalog is not null)
-            {
                 Catalog[product] = stock;
                 return;
-            }
         }
         public void ChangeStock(string name, int stock)
         {
@@ -164,22 +152,18 @@ namespace InventorySystem
         }
         public Product GetProduct(string name)
         {
-            if (Catalog is not null)
+            foreach (var item in Catalog.Keys)
             {
-                foreach (var item in Catalog.Keys)
+                if (item.IsEqual(name))
                 {
-                    if (item.IsEqual(name))
-                    {
-                        return item;
-                    }
-                    else
-                    {
-                        continue;
-                    }
+                    return item;
                 }
-                throw new ArgumentException("Product is not in inventory.");
+                else
+                {
+                    continue;
+                }
             }
-            throw new NullReferenceException("There is no Catalog in the inventory.");
+            throw new ArgumentException("Product is not in inventory.");
         }
     }
 
@@ -225,18 +209,11 @@ namespace InventorySystem
             {
                 throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
             }
-            if (inventory.Catalog is not null)
-            {
                 using StreamWriter inventoryFile = new(PathName);
                 foreach (var product in inventory.Catalog)
                 {
                     inventoryFile.WriteLine("{0};{1};{2}", product.Key.Name, product.Key.Price.ToString(Culture), inventory.Catalog[product.Key]);
                 }
-            }
-            else
-            {
-                throw new NullReferenceException("There's no Catalog in the inventory.");
-            }
             return;
         }
     }
@@ -403,17 +380,13 @@ namespace InventorySystem
             WriteLine("List of products and prices.\n");
             WriteLine("|       Product name       |  Price  |  Stock  |");
             WriteLine("|--------------------------|---------|---------|");
-            if (inventory.Catalog is not null)
+            foreach (var product in inventory.Catalog)
             {
-                foreach (var product in inventory.Catalog)
-                {
-                    WriteLine("|{0,-26}|${1,8:N2}|{2,8:N0}|", product.Key.Name, product.Key.Price, product.Value);
-                    WriteLine("|--------------------------|---------|---------|");
-                }
-                ReadKey();
-                return;
+                WriteLine("|{0,-26}|${1,8:N2}|{2,9:N0}|", product.Key.Name, product.Key.Price, product.Value);
+                WriteLine("|--------------------------|---------|---------|");
             }
-            throw new NullReferenceException("There's no Catalog in the inventory.");
+            ReadKey();
+            return;
         }
         static void DeleteProduct(Inventory inventory)
         {
