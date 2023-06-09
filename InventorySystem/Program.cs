@@ -87,48 +87,44 @@ namespace InventorySystem
                 Catalog = new();
             }
         }
-        public void Add(Product product, int stock = 1)
+        public void AddProduct(Product product, int stock = 1, bool userInteraction = false)
         {
                 try
                 {
                     Catalog.Add(product, stock);
                     WriteLine("Product: {0} added to inventory.", product.Name);
-                    return;
                 }
                 catch (ArgumentException)
                 {
                     WriteLine("This product is already in the inventory.\nTry editing its price or stock instead.");
+                }
+                if (userInteraction)
+                {
                     ReadKey();
-                    return;
                 }
+                return;
         }
-        public void Remove(Product product)
+        public void RemoveProduct(Product product, bool userInteraction = false)
         {
-                try
-                {
-                    Catalog.Remove(product);
-                    WriteLine("Product: {0} deleted.", product.Name);
-                }
-                catch (ArgumentException)
-                {
-                    WriteLine("This product doesn't exist in the inventory.");
-                    ReadKey();
-                    return;
-                }
+            try
+            {
+                Catalog.Remove(product);
+                WriteLine("Product {0} was removed from the inventory.", product.Name);
+            }
+            catch (ArgumentException)
+            {
+                WriteLine("This product doesn't exist in the inventory.");
+            }
+            if (userInteraction)
+            {
+                ReadKey();
+            }
+            return;
         }
-        public void Remove(string name)
+        public void RemoveProduct(string name, bool userInteraction = false)
         {
-                try
-                {
-                    Catalog.Remove(GetProduct(name));
-                    WriteLine("Product {0} was removed from the inventory.", name);
-                    return;
-                }
-                catch (ArgumentException)
-                {
-                    WriteLine("The product doesn't exist in the inventory.");
-                    return;
-                }
+            RemoveProduct(GetProduct(name), userInteraction);
+            return;
         }
         public void ChangeStock(Product product, int stock)
         {
@@ -142,11 +138,13 @@ namespace InventorySystem
                 Product product = GetProduct(name);
                 ChangeStock(product, stock);
                 WriteLine("Product {0} stock changed to {1:N0}", name, stock);
+                ReadKey();
                 return;
             }
             catch (ArgumentException)
             {
                 WriteLine("Product is not in the inventory.");
+                ReadKey();
                 return;
             }
         }
@@ -188,7 +186,7 @@ namespace InventorySystem
                     {
                         string[] pair = line.Split(";");
                         Product product = new(pair[0], decimal.Parse(pair[1], NumberStyles.AllowDecimalPoint, Culture));
-                        inventory.Add(product);
+                        inventory.AddProduct(product, int.Parse(pair[2]));
                     }
                     else
                     {
@@ -234,7 +232,7 @@ namespace InventorySystem
         private static readonly string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
         private static readonly string optionErrorMessage = "Option must be a number";
         private static readonly string emptyErrorMessage = "You have to write a valid option.";
-        // private static readonly string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
+        private static readonly string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
         private static readonly string numberErrorMessage = "You must enter a number.";
 
         public ProgramState CurrentState { get; private set; } = ProgramState.MainMenu;
@@ -268,6 +266,7 @@ namespace InventorySystem
                 //     EditPrice();
                 //     return ProgramState.MainMenu;
                 default:
+                    WriteLine(exitMessage);
                     return ProgramState.Exit;
             }
 
@@ -352,7 +351,7 @@ namespace InventorySystem
 
             try
             {
-                inventory.Add(operativeProduct);
+                inventory.AddProduct(operativeProduct, userInteraction: true);
             }
             catch (ArgumentException)
             {
@@ -395,14 +394,13 @@ namespace InventorySystem
             Write("Product to delete: ");
             try
             {
-                inventory.Remove(GetAText());
-                return;
+                inventory.RemoveProduct(GetAText(), true);
             }
             catch (ArgumentException)
             {
                 WriteLine("Product not found in inventory.");
-                return;
             }
+            return;
         }
 
     }
