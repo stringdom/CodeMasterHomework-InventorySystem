@@ -75,7 +75,14 @@ namespace InventorySystem
 
     public class Inventory
     {
-        public Dictionary<Product,int>? Catalog { get; set; }
+        public Dictionary<Product,int> Catalog { get; set; }
+        public Inventory()
+        {
+            if (Catalog == null)
+            {
+                Catalog.Add(new Product("Empty", 0m), 1);
+            }
+        }
         public void Add(Product product, int stock = 1)
         {
             try
