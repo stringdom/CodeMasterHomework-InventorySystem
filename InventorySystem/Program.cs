@@ -75,61 +75,77 @@ namespace InventorySystem
 
     public class Inventory
     {
-        public Dictionary<Product,int> Catalog { get; set; }
+        public Dictionary<Product,int>? Catalog { get; set; }
         public Inventory()
         {
-            if (Catalog == null)
+            if (Catalog is null)
+            {
+                return;
+            }
+            else
             {
                 Catalog.Add(new Product("Empty", 0m), 1);
             }
         }
         public void Add(Product product, int stock = 1)
         {
-            try
+            if (Catalog is not null)
             {
-                Catalog.Add(product, stock);
-                WriteLine("Product: {0} added to inventory.", product.Name);
-                return;
-            }
-            catch (ArgumentException)
-            {
-                WriteLine("This product is already in the inventory.\nTry editing its price or stock instead.");
-                ReadKey();
-                return;
+                try
+                {
+                    Catalog.Add(product, stock);
+                    WriteLine("Product: {0} added to inventory.", product.Name);
+                    return;
+                }
+                catch (ArgumentException)
+                {
+                    WriteLine("This product is already in the inventory.\nTry editing its price or stock instead.");
+                    ReadKey();
+                    return;
+                }
             }
         }
         public void Remove(Product product)
         {
-            try
+            if (Catalog is not null)
             {
-                Catalog.Remove(product);
-                WriteLine("Product: {0} deleted.", product.Name);
-            }
-            catch (ArgumentException)
-            {
-                WriteLine("This product doesn't exist in the inventory.");
-                ReadKey();
-                return;
+                try
+                {
+                    Catalog.Remove(product);
+                    WriteLine("Product: {0} deleted.", product.Name);
+                }
+                catch (ArgumentException)
+                {
+                    WriteLine("This product doesn't exist in the inventory.");
+                    ReadKey();
+                    return;
+                }
             }
         }
         public void Remove(string name)
         {
-            try
+            if (Catalog is not null)
             {
-                Catalog.Remove(GetProduct(name));
-                WriteLine("Product {0} was removed from the inventory.", name);
-                return;
-            }
-            catch (ArgumentException)
-            {
-                WriteLine("The product doesn't exist in the inventory.");
-                return;
+                try
+                {
+                    Catalog.Remove(GetProduct(name));
+                    WriteLine("Product {0} was removed from the inventory.", name);
+                    return;
+                }
+                catch (ArgumentException)
+                {
+                    WriteLine("The product doesn't exist in the inventory.");
+                    return;
+                }
             }
         }
         public void ChangeStock(Product product, int stock)
         {
-            Catalog[product] = stock;
-            return;
+            if (Catalog is not null)
+            {
+                Catalog[product] = stock;
+                return;
+            }
         }
         public void ChangeStock(string name, int stock)
         {
@@ -148,18 +164,22 @@ namespace InventorySystem
         }
         public Product GetProduct(string name)
         {
-            foreach (var item in Catalog.Keys)
+            if (Catalog is not null)
             {
-                if (item.IsEqual(name))
+                foreach (var item in Catalog.Keys)
                 {
-                    return item;
+                    if (item.IsEqual(name))
+                    {
+                        return item;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
-                else
-                {
-                    continue;
-                }
+                throw new ArgumentException("Product is not in inventory.");
             }
-            throw new ArgumentException("Product is not in inventory.");
+            throw new NullReferenceException("There is no Catalog in the inventory.");
         }
     }
 
@@ -167,14 +187,13 @@ namespace InventorySystem
     {
         public static CultureInfo Culture { get; set; } = new("es-ES");
         public static string PathName { get; set; } = "inventory.csv";
-        public static Inventory LoadInventory()
+        public static Inventory LoadInventory(Inventory inventory)
         {
             if (string.IsNullOrWhiteSpace(PathName))
             {
                 throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
             }
 
-            Inventory inventoryInFile = new();
             if (File.Exists(PathName))
             {
                 using StreamReader inventoryFile = new(PathName, true);
@@ -185,19 +204,19 @@ namespace InventorySystem
                     {
                         string[] pair = line.Split(";");
                         Product product = new(pair[0], decimal.Parse(pair[1], NumberStyles.AllowDecimalPoint, Culture));
-                        inventoryInFile.Add(product);
+                        inventory.Add(product);
                     }
                     else
                     {
                         break;
                     }
                 }
-                return inventoryInFile;
+                return inventory;
             }
             else
             {
                 File.CreateText(PathName);
-                return inventoryInFile;
+                return inventory;
             }
         }
         public static void WriteInventory(Inventory inventory)
@@ -206,10 +225,17 @@ namespace InventorySystem
             {
                 throw new ArgumentException($"'{nameof(PathName)}' cannot be null or whitespace.", nameof(PathName));
             }
-            using StreamWriter inventoryFile = new(PathName);
-            foreach (var product in inventory.Catalog)
+            if (inventory.Catalog is not null)
             {
-                inventoryFile.WriteLine("{0};{1};{2}", product.Key.Name, product.Key.Price.ToString(Culture), inventory.Catalog[product.Key]);
+                using StreamWriter inventoryFile = new(PathName);
+                foreach (var product in inventory.Catalog)
+                {
+                    inventoryFile.WriteLine("{0};{1};{2}", product.Key.Name, product.Key.Price.ToString(Culture), inventory.Catalog[product.Key]);
+                }
+            }
+            else
+            {
+                throw new NullReferenceException("There's no Catalog in the inventory.");
             }
             return;
         }
@@ -231,7 +257,7 @@ namespace InventorySystem
         private static readonly string mainMenuOptions = "Choose an option and press [Enter]:\n [1] Display all products in inventory.\n [2] Add a new product.\n [3] Delete a product.\n [4] Edit price of product.\n [5] Exit Inventory system";
         private static readonly string optionErrorMessage = "Option must be a number";
         private static readonly string emptyErrorMessage = "You have to write a valid option.";
-        private static readonly string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
+        // private static readonly string exitMessage= "Thanks for using our Inventory System.\nHave a great day!";
         private static readonly string numberErrorMessage = "You must enter a number.";
 
         public ProgramState CurrentState { get; private set; } = ProgramState.MainMenu;
@@ -377,12 +403,17 @@ namespace InventorySystem
             WriteLine("List of products and prices.\n");
             WriteLine("|       Product name       |  Price  |  Stock  |");
             WriteLine("|--------------------------|---------|---------|");
-            foreach (var product in inventory.Catalog)
+            if (inventory.Catalog is not null)
             {
-                WriteLine("|{0,-26}|${1,8:N2}|{2,8:N0}|", product.Key.Name, product.Key.Price, product.Value);
-                WriteLine("|--------------------------|---------|---------|");
+                foreach (var product in inventory.Catalog)
+                {
+                    WriteLine("|{0,-26}|${1,8:N2}|{2,8:N0}|", product.Key.Name, product.Key.Price, product.Value);
+                    WriteLine("|--------------------------|---------|---------|");
+                }
+                ReadKey();
+                return;
             }
-            ReadKey();
+            throw new NullReferenceException("There's no Catalog in the inventory.");
         }
         static void DeleteProduct(Inventory inventory)
         {
@@ -406,17 +437,13 @@ namespace InventorySystem
     {
         static void Main()
         {
-            // Inventory inventory = FileOperator.LoadInventory();
-            // MenuControl inventoryMenu = new(inventory);
-            // if (inventoryMenu.CurrentState == MenuControl.ProgramState.Exit)
-            // {
-            //     ReadKey();
-            //     return;
-            // }
-            // WriteFile();
+            Inventory inventory = new();
+            inventory = FileOperator.LoadInventory(inventory);
+            _ = new MenuControl(inventory);
+            FileOperator.WriteInventory(inventory);
+            ReadKey();
         }
-
-        }
+    }
 
             
             // if (CheckProduct(product))
